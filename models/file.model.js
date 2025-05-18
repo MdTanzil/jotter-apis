@@ -36,6 +36,10 @@ const fileSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  isFavorite: {
+    type: Boolean,
+    default: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -55,5 +59,6 @@ fileSchema.pre('save', function(next) {
 // Create indexes for faster queries
 fileSchema.index({ user: 1, folder: 1 });
 fileSchema.index({ name: 'text' });
+fileSchema.index({ createdAt: 1 }); // Add index for date-based queries
 
 module.exports = mongoose.model('File', fileSchema); 

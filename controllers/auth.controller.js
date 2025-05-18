@@ -1,6 +1,9 @@
 const User = require('../models/user.model');
 const crypto = require('crypto');
 const sendEmail = require('../utils/sendEmail');
+const File = require('../models/file.model');
+const Folder = require('../models/folder.model');
+const fs = require('fs');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -159,4 +162,54 @@ const sendTokenResponse = (user, statusCode, res) => {
     success: true,
     token
   });
+};
+
+// Logout user
+exports.logout = async (req, res) => {
+  try {
+    // In a real implementation, you might want to add the token to a blacklist
+    // or invalidate it in your token store
+    res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error logging out',
+      error: error.message
+    });
+  }
+};
+
+// Delete account
+exports.deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    // Delete all files associated with the user
+    const files = await File.find({ user: req.user.id });
+    for (const file of files) {
+      // Delete the actual file from storage
+      await fs.unlink(file.path);
+      await file.remove();
+    }
+
+    // Delete all folders associated with the user
+    await Folder.deleteMany({ user: req.user.id });
+
+    // Delete the user
+    await user.remove();
+
+    res.json({
+      success: true,
+      message: 'Account deleted successfully'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting account',
+      error: error.message
+    });
+  }
 }; 

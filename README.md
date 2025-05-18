@@ -1,30 +1,44 @@
-# Jotter - Cloud Storage API
+# Jotter API
 
-A Node.js backend API for a cloud storage system similar to Google Drive, built with Express.js and MongoDB.
+A cloud storage REST API similar to Google Drive, built with Node.js, Express, and MongoDB.
 
 ## Features
 
-- User Authentication (JWT-based)
-- File Upload and Management
-- Folder Organization
-- Storage Limit Management (15GB per user)
-- Dashboard Statistics
-- Email-based Password Reset
+- 🔐 User Authentication
+  - Register/Login with JWT
+  - Password reset via email
+  - Account deletion
+  - Logout functionality
 
-## Tech Stack
+- 📁 File Management
+  - Upload/download files
+  - Create/update/delete files
+  - 15GB storage limit per user
+  - File sharing (public/private)
+  - Favorite files system
+  - Calendar-based file view
 
-- Node.js
-- Express.js
-- MongoDB with Mongoose
-- JWT for Authentication
-- Multer for File Uploads
-- Nodemailer for Emails
+- 📂 Folder Management
+  - Create/update/delete folders
+  - Nested folder structure
+  - Move files between folders
 
-## Setup
+- 📊 Dashboard
+  - Storage usage statistics
+  - File type distribution
+  - Recent files
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- MongoDB
+- npm or yarn
+
+## Installation
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/yourusername/jotter-apis.git
 cd jotter-apis
 ```
 
@@ -33,146 +47,87 @@ cd jotter-apis
 npm install
 ```
 
-3. Create a `.env` file in the root directory with the following variables:
+3. Create a .env file in the root directory:
 ```env
 PORT=5000
-MONGODB_URI=
-JWT_SECRET=
-JWT_EXPIRE=
-
-# Email Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_specific_password
-
-# File Upload Limits
-MAX_FILE_SIZE=15000000000 # 15GB in bytes
-ALLOWED_FILE_TYPES=image/jpeg,image/png,image/gif,application/pdf,application/msword
-
-# Frontend URL
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRE=30d
+SMTP_HOST=your_smtp_host
+SMTP_PORT=your_smtp_port
+SMTP_EMAIL=your_email
+SMTP_PASSWORD=your_password
 FRONTEND_URL=http://localhost:3000
 ```
 
-4. Create required directories:
+4. Create uploads directory:
 ```bash
 mkdir uploads
 ```
 
 5. Start the server:
 ```bash
-# Development
+# Development mode
 npm run dev
 
-# Production
+# Production mode
 npm start
 ```
 
-## API Documentation
+## API Endpoints
 
 ### Authentication
-
-#### Register User
-- **POST** `/api/auth/register`
-- Body: `{ "name": "string", "email": "string", "password": "string" }`
-
-#### Login User
-- **POST** `/api/auth/login`
-- Body: `{ "email": "string", "password": "string" }`
-
-#### Forgot Password
-- **POST** `/api/auth/forgotpassword`
-- Body: `{ "email": "string" }`
-
-#### Reset Password
-- **PUT** `/api/auth/resetpassword/:resettoken`
-- Body: `{ "password": "string" }`
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Login user
+- `POST /api/auth/logout` - Logout user
+- `POST /api/auth/forgot-password` - Request password reset
+- `POST /api/auth/reset-password/:token` - Reset password
+- `DELETE /api/auth/account/delete` - Delete account
 
 ### Files
-
-#### Upload File
-- **POST** `/api/files`
-- Headers: `Authorization: Bearer <token>`
-- Body: `form-data { "file": <file>, "folderId": "string" (optional) }`
-
-#### Get All Files
-- **GET** `/api/files`
-- Query: `?folderId=<folder-id>` (optional)
-- Headers: `Authorization: Bearer <token>`
-
-#### Get Single File
-- **GET** `/api/files/:id`
-- Headers: `Authorization: Bearer <token>`
-
-#### Download File
-- **GET** `/api/files/:id/download`
-- Headers: `Authorization: Bearer <token>`
-
-#### Update File
-- **PUT** `/api/files/:id`
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ "name": "string", "isPublic": boolean, "folderId": "string" }`
-
-#### Delete File
-- **DELETE** `/api/files/:id`
-- Headers: `Authorization: Bearer <token>`
+- `POST /api/files` - Upload file
+- `GET /api/files` - Get all files
+- `GET /api/files/:id` - Get single file
+- `PUT /api/files/:id` - Update file
+- `DELETE /api/files/:id` - Delete file
+- `GET /api/files/by-date` - Get files by date
+- `POST /api/files/:id/favorite` - Toggle favorite
+- `GET /api/files/favorites` - Get favorite files
 
 ### Folders
-
-#### Create Folder
-- **POST** `/api/folders`
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ "name": "string", "parentId": "string" (optional) }`
-
-#### Get All Folders
-- **GET** `/api/folders`
-- Query: `?parentId=<parent-id>` (optional)
-- Headers: `Authorization: Bearer <token>`
-
-#### Get Single Folder
-- **GET** `/api/folders/:id`
-- Headers: `Authorization: Bearer <token>`
-
-#### Update Folder
-- **PUT** `/api/folders/:id`
-- Headers: `Authorization: Bearer <token>`
-- Body: `{ "name": "string", "isPublic": boolean }`
-
-#### Delete Folder
-- **DELETE** `/api/folders/:id`
-- Headers: `Authorization: Bearer <token>`
+- `POST /api/folders` - Create folder
+- `GET /api/folders` - Get all folders
+- `GET /api/folders/:id` - Get single folder
+- `PUT /api/folders/:id` - Update folder
+- `DELETE /api/folders/:id` - Delete folder
 
 ### Dashboard
-
-#### Get Dashboard Statistics
-- **GET** `/api/dashboard`
-- Headers: `Authorization: Bearer <token>`
-- Returns:
-  - Storage usage statistics
-  - File type counts and sizes
-  - Recent files
+- `GET /api/dashboard/stats` - Get user statistics
 
 ## Error Handling
 
-The API uses a consistent error response format:
+The API uses consistent error responses:
+
 ```json
 {
   "success": false,
-  "message": "Error message"
+  "message": "Error message here"
 }
 ```
 
 ## Security Features
 
-- JWT-based authentication
+- JWT Authentication
 - Password hashing
 - File type validation
 - Storage limit enforcement
-- Route protection
-- Input validation
+- Rate limiting
+- CORS enabled
 
+## Testing
 
+Import the Postman collection (`Jotter.postman_collection.json`) to test all endpoints.
 
 ## License
 
-This project is licensed under the MIT License. 
+MIT 

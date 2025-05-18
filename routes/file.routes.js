@@ -1,29 +1,38 @@
 const express = require('express');
 const router = express.Router();
+const { protect } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const {
   uploadFile,
   getFiles,
   getFile,
   updateFile,
   deleteFile,
-  downloadFile
+  toggleFavorite,
+  getFavorites,
+  getFilesByDate
 } = require('../controllers/file.controller');
-const { protect } = require('../middlewares/auth.middleware');
-const { upload, checkStorageLimit } = require('../middlewares/upload.middleware');
 
+// Protected routes
 router.use(protect);
 
-router
-  .route('/')
+// File routes
+router.route('/')
   .get(getFiles)
-  .post(checkStorageLimit, upload.single('file'), uploadFile);
+  .post(upload.single('file'), uploadFile);
 
-router
-  .route('/:id')
+router.route('/favorites')
+  .get(getFavorites);
+
+router.route('/by-date')
+  .get(getFilesByDate);
+
+router.route('/:id')
   .get(getFile)
   .put(updateFile)
   .delete(deleteFile);
 
-router.get('/:id/download', downloadFile);
+router.route('/:id/favorite')
+  .post(toggleFavorite);
 
 module.exports = router; 

@@ -200,4 +200,94 @@ exports.deleteFile = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// Toggle favorite status
+exports.toggleFavorite = async (req, res) => {
+  try {
+    const file = await File.findOne({ _id: req.params.id, user: req.user.id });
+    
+    if (!file) {
+      return res.status(404).json({
+        success: false,
+        message: 'File not found'
+      });
+    }
+
+    file.isFavorite = !file.isFavorite;
+    await file.save();
+
+    res.json({
+      success: true,
+      data: file
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error toggling favorite status',
+      error: error.message
+    });
+  }
+};
+
+// Get all favorite files
+exports.getFavorites = async (req, res) => {
+  try {
+    const files = await File.find({ 
+      user: req.user.id,
+      isFavorite: true 
+    }).sort('-createdAt');
+
+    res.json({
+      success: true,
+      count: files.length,
+      data: files
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching favorite files',
+      error: error.message
+    });
+  }
+};
+
+// Get files by date
+exports.getFilesByDate = async (req, res) => {
+  try {
+    const { date } = req.query;
+    
+    if (!date) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a date'
+      });
+    }
+
+    const startDate = new Date(date);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(date);
+    endDate.setHours(23, 59, 59, 999);
+
+    const files = await File.find({
+      user: req.user.id,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    }).sort('-createdAt');
+
+    res.json({
+      success: true,
+      count: files.length,
+      data: files
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching files by date',
+      error: error.message
+    });
+  }
 }; 

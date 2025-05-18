@@ -8,7 +8,7 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:50001/api",
+      "value": "http://localhost:5000/api",
       "type": "string"
     },
     {
@@ -22,7 +22,7 @@
       "name": "Authentication",
       "item": [
         {
-          "name": "Register User",
+          "name": "Register",
           "request": {
             "method": "POST",
             "header": [
@@ -31,25 +31,19 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
-            },
             "url": {
               "raw": "{{base_url}}/auth/register",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
             },
-            "description": "Register a new user"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"Test User\",\n\t\"email\": \"test@example.com\",\n\t\"password\": \"password123\"\n}"
+            }
           }
         },
         {
-          "name": "Login User",
+          "name": "Login",
           "request": {
             "method": "POST",
             "header": [
@@ -58,21 +52,32 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
-            },
             "url": {
               "raw": "{{base_url}}/auth/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
             },
-            "description": "Login with existing user credentials"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"email\": \"test@example.com\",\n\t\"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
           }
         },
         {
@@ -85,55 +90,59 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{base_url}}/auth/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "forgot-password"]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"test@example.com\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/forgotpassword",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "forgotpassword"
-              ]
-            },
-            "description": "Request password reset token"
+              "raw": "{\n\t\"email\": \"test@example.com\"\n}"
+            }
           }
         },
         {
           "name": "Reset Password",
           "request": {
-            "method": "PUT",
+            "method": "POST",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"password\": \"newpassword123\"\n}"
-            },
             "url": {
-              "raw": "{{base_url}}/auth/resetpassword/:resettoken",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "resetpassword",
-                ":resettoken"
-              ],
+              "raw": "{{base_url}}/auth/reset-password/:token",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "reset-password", ":token"],
               "variable": [
                 {
-                  "key": "resettoken",
-                  "value": "YOUR_RESET_TOKEN"
+                  "key": "token",
+                  "value": "reset-token-here"
                 }
               ]
             },
-            "description": "Reset password using token"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"password\": \"newpassword123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/account/delete",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "account", "delete"]
+            }
           }
         }
       ]
@@ -151,6 +160,11 @@
                 "value": "Bearer {{token}}"
               }
             ],
+            "url": {
+              "raw": "{{base_url}}/files",
+              "host": ["{{base_url}}"],
+              "path": ["files"]
+            },
             "body": {
               "mode": "formdata",
               "formdata": [
@@ -163,20 +177,10 @@
                   "key": "folderId",
                   "value": "",
                   "type": "text",
-                  "description": "Optional folder ID"
+                  "disabled": true
                 }
               ]
-            },
-            "url": {
-              "raw": "{{base_url}}/files",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "files"
-              ]
-            },
-            "description": "Upload a new file"
+            }
           }
         },
         {
@@ -190,26 +194,21 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/files?folderId=",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "files"
-              ],
+              "raw": "{{base_url}}/files",
+              "host": ["{{base_url}}"],
+              "path": ["files"],
               "query": [
                 {
                   "key": "folderId",
                   "value": "",
-                  "description": "Optional folder ID"
+                  "disabled": true
                 }
               ]
-            },
-            "description": "Get all files for the authenticated user"
+            }
           }
         },
         {
-          "name": "Get Single File",
+          "name": "Get File",
           "request": {
             "method": "GET",
             "header": [
@@ -220,51 +219,15 @@
             ],
             "url": {
               "raw": "{{base_url}}/files/:id",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "files",
-                ":id"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["files", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "FILE_ID"
+                  "value": "file-id-here"
                 }
               ]
-            },
-            "description": "Get details of a specific file"
-          }
-        },
-        {
-          "name": "Download File",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/files/:id/download",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "files",
-                ":id",
-                "download"
-              ],
-              "variable": [
-                {
-                  "key": "id",
-                  "value": "FILE_ID"
-                }
-              ]
-            },
-            "description": "Download a specific file"
+            }
           }
         },
         {
@@ -281,27 +244,21 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"renamed-file.txt\",\n    \"isPublic\": true,\n    \"folderId\": \"FOLDER_ID\"\n}"
-            },
             "url": {
               "raw": "{{base_url}}/files/:id",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "files",
-                ":id"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["files", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "FILE_ID"
+                  "value": "file-id-here"
                 }
               ]
             },
-            "description": "Update file details"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"Updated File Name\",\n\t\"isPublic\": false,\n\t\"folderId\": \"folder-id-here\"\n}"
+            }
           }
         },
         {
@@ -316,21 +273,78 @@
             ],
             "url": {
               "raw": "{{base_url}}/files/:id",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "files",
-                ":id"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["files", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "FILE_ID"
+                  "value": "file-id-here"
                 }
               ]
-            },
-            "description": "Delete a specific file"
+            }
+          }
+        },
+        {
+          "name": "Get Files By Date",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/files/by-date?date=2024-03-20",
+              "host": ["{{base_url}}"],
+              "path": ["files", "by-date"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-03-20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Toggle Favorite",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/files/:id/favorite",
+              "host": ["{{base_url}}"],
+              "path": ["files", ":id", "favorite"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "file-id-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Favorite Files",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/files/favorites",
+              "host": ["{{base_url}}"],
+              "path": ["files", "favorites"]
+            }
           }
         }
       ]
@@ -352,20 +366,15 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"New Folder\",\n    \"parentId\": \"PARENT_FOLDER_ID\"\n}"
-            },
             "url": {
               "raw": "{{base_url}}/folders",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "folders"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["folders"]
             },
-            "description": "Create a new folder"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"New Folder\",\n\t\"parentId\": \"parent-folder-id-here\"\n}"
+            }
           }
         },
         {
@@ -379,26 +388,21 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/folders?parentId=",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "folders"
-              ],
+              "raw": "{{base_url}}/folders",
+              "host": ["{{base_url}}"],
+              "path": ["folders"],
               "query": [
                 {
                   "key": "parentId",
                   "value": "",
-                  "description": "Optional parent folder ID"
+                  "disabled": true
                 }
               ]
-            },
-            "description": "Get all folders for the authenticated user"
+            }
           }
         },
         {
-          "name": "Get Single Folder",
+          "name": "Get Folder",
           "request": {
             "method": "GET",
             "header": [
@@ -409,21 +413,15 @@
             ],
             "url": {
               "raw": "{{base_url}}/folders/:id",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "folders",
-                ":id"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["folders", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "FOLDER_ID"
+                  "value": "folder-id-here"
                 }
               ]
-            },
-            "description": "Get details of a specific folder"
+            }
           }
         },
         {
@@ -440,27 +438,21 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Renamed Folder\",\n    \"isPublic\": true\n}"
-            },
             "url": {
               "raw": "{{base_url}}/folders/:id",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "folders",
-                ":id"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["folders", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "FOLDER_ID"
+                  "value": "folder-id-here"
                 }
               ]
             },
-            "description": "Update folder details"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"Updated Folder Name\",\n\t\"isPublic\": false\n}"
+            }
           }
         },
         {
@@ -475,21 +467,15 @@
             ],
             "url": {
               "raw": "{{base_url}}/folders/:id",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "folders",
-                ":id"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["folders", ":id"],
               "variable": [
                 {
                   "key": "id",
-                  "value": "FOLDER_ID"
+                  "value": "folder-id-here"
                 }
               ]
-            },
-            "description": "Delete a specific folder"
+            }
           }
         }
       ]
@@ -498,7 +484,7 @@
       "name": "Dashboard",
       "item": [
         {
-          "name": "Get Dashboard Stats",
+          "name": "Get Statistics",
           "request": {
             "method": "GET",
             "header": [
@@ -508,15 +494,10 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/dashboard",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "dashboard"
-              ]
-            },
-            "description": "Get dashboard statistics including storage usage and file counts"
+              "raw": "{{base_url}}/dashboard/stats",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard", "stats"]
+            }
           }
         }
       ]
