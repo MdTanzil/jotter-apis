@@ -1,46 +1,40 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 
-exports.protect = async (req, res, next) => {
-  try {
-    let token;
-
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      token = req.headers.authorization.split(' ')[1];
-    }
-
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to access this route'
-      });
-    }
-
+const auth = async (req, res, next) => {
     try {
-      // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // Get token from header
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: 'No authentication token, access denied'
+            });
+        }
 
-      // Get user from token
-      req.user = await User.findById(decoded.id);
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // Find user
+        const user = await User.findById(decoded.id);
+        
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
 
-      if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          message: 'User not found'
+        // Add user to request object
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({
+            success: false,
+            message: 'Token is invalid'
         });
-      }
-
-      next();
-    } catch (err) {
-      return res.status(401).json({
-        success: false,
-        message: 'Not authorized to access this route'
-      });
     }
-  } catch (error) {
-    next(error);
-  }
-}; 
+};
+
+module.exports = auth; 

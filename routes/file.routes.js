@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const auth = require('../middlewares/auth.middleware');
+const { upload, checkStorageLimit } = require('../middlewares/upload.middleware');
 const {
   uploadFile,
   getFiles,
@@ -19,7 +19,7 @@ router.use(auth);
 // File routes
 router.route('/')
   .get(getFiles)
-  .post(upload.single('file'), uploadFile);
+  .post(upload.single('file'), checkStorageLimit, uploadFile);
 
 router.route('/favorites')
   .get(getFavorites);
