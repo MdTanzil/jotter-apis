@@ -38,7 +38,7 @@ A cloud storage REST API similar to Google Drive, built with Node.js, Express, a
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/jotter-apis.git
+git clone https://github.com/MdTanzil/jotter-apis.git
 cd jotter-apis
 ```
 
