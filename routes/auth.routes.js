@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const auth = require('../middleware/auth');
 const {
   register,
   login,
@@ -17,7 +17,7 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
 // Protected routes
-router.use(protect);
+router.use(auth);
 router.post('/logout', logout);
 router.delete('/account/delete', deleteAccount);
 

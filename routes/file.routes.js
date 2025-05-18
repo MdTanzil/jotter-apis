@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const auth = require('../middleware/auth');
 const upload = require('../middleware/upload');
 const {
   uploadFile,
@@ -14,7 +14,7 @@ const {
 } = require('../controllers/file.controller');
 
 // Protected routes
-router.use(protect);
+router.use(auth);
 
 // File routes
 router.route('/')
