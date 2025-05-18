@@ -28,6 +28,19 @@ A cloud storage REST API similar to Google Drive, built with Node.js, Express, a
   - File type distribution
   - Recent files
 
+## Project Structure
+
+```
+jotter-apis/
+├── config/         # Configuration files
+├── controllers/    # Route controllers
+├── middlewares/    # Middleware functions
+├── models/        # Database models
+├── routes/        # API routes
+├── utils/         # Utility functions
+└── uploads/       # Uploaded files storage
+```
+
 ## Prerequisites
 
 - Node.js (v14 or higher)

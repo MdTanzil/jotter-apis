@@ -13,7 +13,7 @@
     },
     {
       "key": "token",
-      "value": "YOUR_JWT_TOKEN",
+      "value": "",
       "type": "string"
     }
   ],
@@ -44,6 +44,20 @@
         },
         {
           "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"token\", jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -172,19 +186,13 @@
                   "key": "file",
                   "type": "file",
                   "src": []
-                },
-                {
-                  "key": "folderId",
-                  "value": "",
-                  "type": "text",
-                  "disabled": true
                 }
               ]
             }
           }
         },
         {
-          "name": "Get All Files",
+          "name": "Get Files",
           "request": {
             "method": "GET",
             "header": [
@@ -196,14 +204,7 @@
             "url": {
               "raw": "{{base_url}}/files",
               "host": ["{{base_url}}"],
-              "path": ["files"],
-              "query": [
-                {
-                  "key": "folderId",
-                  "value": "",
-                  "disabled": true
-                }
-              ]
+              "path": ["files"]
             }
           }
         },
@@ -224,7 +225,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "file-id-here"
+                  "value": ""
                 }
               ]
             }
@@ -251,13 +252,13 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "file-id-here"
+                  "value": ""
                 }
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"name\": \"Updated File Name\",\n\t\"isPublic\": false,\n\t\"folderId\": \"folder-id-here\"\n}"
+              "raw": "{\n\t\"name\": \"Updated File Name\"\n}"
             }
           }
         },
@@ -278,30 +279,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "file-id-here"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Files By Date",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/files/by-date?date=2024-03-20",
-              "host": ["{{base_url}}"],
-              "path": ["files", "by-date"],
-              "query": [
-                {
-                  "key": "date",
-                  "value": "2024-03-20"
+                  "value": ""
                 }
               ]
             }
@@ -324,14 +302,14 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "file-id-here"
+                  "value": ""
                 }
               ]
             }
           }
         },
         {
-          "name": "Get Favorite Files",
+          "name": "Get Favorites",
           "request": {
             "method": "GET",
             "header": [
@@ -344,6 +322,29 @@
               "raw": "{{base_url}}/files/favorites",
               "host": ["{{base_url}}"],
               "path": ["files", "favorites"]
+            }
+          }
+        },
+        {
+          "name": "Get Files By Date",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/files/by-date",
+              "host": ["{{base_url}}"],
+              "path": ["files", "by-date"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2024-03-20"
+                }
+              ]
             }
           }
         }
@@ -373,12 +374,12 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"name\": \"New Folder\",\n\t\"parentId\": \"parent-folder-id-here\"\n}"
+              "raw": "{\n\t\"name\": \"New Folder\"\n}"
             }
           }
         },
         {
-          "name": "Get All Folders",
+          "name": "Get Folders",
           "request": {
             "method": "GET",
             "header": [
@@ -390,14 +391,7 @@
             "url": {
               "raw": "{{base_url}}/folders",
               "host": ["{{base_url}}"],
-              "path": ["folders"],
-              "query": [
-                {
-                  "key": "parentId",
-                  "value": "",
-                  "disabled": true
-                }
-              ]
+              "path": ["folders"]
             }
           }
         },
@@ -418,7 +412,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "folder-id-here"
+                  "value": ""
                 }
               ]
             }
@@ -445,13 +439,13 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "folder-id-here"
+                  "value": ""
                 }
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"name\": \"Updated Folder Name\",\n\t\"isPublic\": false\n}"
+              "raw": "{\n\t\"name\": \"Updated Folder Name\"\n}"
             }
           }
         },
@@ -472,7 +466,7 @@
               "variable": [
                 {
                   "key": "id",
-                  "value": "folder-id-here"
+                  "value": ""
                 }
               ]
             }
